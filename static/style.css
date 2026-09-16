@@ -1,0 +1,643 @@
+/* Estilos Profesionales Dark Mode - Stockfish 19 Web GUI */
+:root {
+    --bg-primary: #181a1b;
+    --bg-panel: #242729;
+    --bg-card: #2c3033;
+    --border-color: #3b4045;
+    --text-primary: #f0f2f5;
+    --text-muted: #9aa2ab;
+    --accent: #45a049;
+    --accent-hover: #4caf50;
+    --accent-blue: #2196f3;
+    --danger: #e53935;
+    --warning: #ffb300;
+
+    /* Tablero Clásico Élite (Estilo Chess.com / Lichess) */
+    --sq-light: #ececd0;
+    --sq-dark: #739552;
+    --sq-highlight: rgba(255, 255, 50, 0.42);
+    --sq-selected: rgba(20, 150, 250, 0.5);
+    --sq-hint: rgba(40, 200, 60, 0.55);
+    --sq-check: radial-gradient(ellipse at center, rgba(255, 0, 0, 0.85) 0%, rgba(230, 0, 0, 0.4) 60%, rgba(200, 0, 0, 0) 90%);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+header {
+    background-color: var(--bg-panel);
+    border-bottom: 1px solid var(--border-color);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-icon {
+    font-size: 26px;
+}
+
+.header-brand h1 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.engine-badge {
+    background: linear-gradient(135deg, #1e88e5, #1565c0);
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.header-status {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.status-dot.thinking {
+    background-color: var(--warning);
+    box-shadow: 0 0 10px var(--warning);
+    animation: pulse 1s infinite alternate;
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.9); opacity: 0.6; }
+    100% { transform: scale(1.3); opacity: 1; }
+}
+
+/* Layout Principal */
+main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+    gap: 24px;
+    max-width: 1300px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Área del Tablero y Barra de Evaluación */
+.game-area {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+/* Barra de Evaluación */
+.eval-bar-container {
+    width: 32px;
+    height: 600px;
+    background-color: #2b2b2b;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column-reverse; /* El llenado blanco crece desde abajo */
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border-color);
+}
+
+.eval-bar-fill {
+    width: 100%;
+    background: #ffffff;
+    transition: height 0.4s cubic-bezier(0.2, 0.8, 0.3, 1);
+    height: 50%;
+}
+
+.eval-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 800;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.eval-text.white-text {
+    bottom: 6px;
+    color: #111;
+}
+
+.eval-text.black-text {
+    top: 6px;
+    color: #eee;
+}
+
+/* Tablero de Ajedrez */
+.board-container {
+    position: relative;
+    width: 600px;
+    height: 600px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: var(--sq-dark);
+}
+
+.chessboard {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    width: 100%;
+    height: 100%;
+}
+
+.square {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.square.light {
+    background-color: var(--sq-light);
+}
+
+.square.dark {
+    background-color: var(--sq-dark);
+}
+
+/* Coordenadas en las casillas */
+.coord {
+    position: absolute;
+    font-size: 11px;
+    font-weight: 700;
+    pointer-events: none;
+}
+
+.coord.file {
+    bottom: 2px;
+    right: 4px;
+}
+
+.coord.rank {
+    top: 2px;
+    left: 4px;
+}
+
+.square.light .coord {
+    color: var(--sq-dark);
+}
+
+.square.dark .coord {
+    color: var(--sq-light);
+}
+
+/* Resaltados */
+.square.selected {
+    background-color: var(--sq-selected) !important;
+}
+
+.square.last-move {
+    background-color: var(--sq-highlight) !important;
+}
+
+.square.in-check {
+    background: var(--sq-check) !important;
+}
+
+.square.hint {
+    background-color: var(--sq-hint) !important;
+}
+
+/* Puntos indicadores de movimientos legales */
+.legal-dot {
+    position: absolute;
+    width: 28%;
+    height: 28%;
+    background-color: rgba(0, 0, 0, 0.25);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.legal-capture-ring {
+    position: absolute;
+    width: 86%;
+    height: 86%;
+    border: 5px solid rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 5;
+}
+
+/* Piezas SVG */
+.piece {
+    width: 90%;
+    height: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 4;
+    transition: transform 0.1s ease;
+    cursor: grab;
+}
+
+.piece:active {
+    cursor: grabbing;
+}
+
+.piece.dragging {
+    opacity: 0.1;
+}
+
+.chess-piece-svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
+}
+
+/* Pieza fantasma durante drag & drop */
+.ghost-piece {
+    position: fixed;
+    pointer-events: none;
+    z-index: 1000;
+    width: 68px;
+    height: 68px;
+    transform: translate(-50%, -50%);
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.6));
+}
+
+/* Panel Lateral (Controles e Historial) */
+.sidebar {
+    width: 380px;
+    background-color: var(--bg-panel);
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.player-info-card {
+    padding: 14px 18px;
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.player-details {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.player-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    background-color: #3b4045;
+}
+
+.player-name {
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.player-elo {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.captured-pieces {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    min-height: 22px;
+}
+
+.captured-mini {
+    width: 18px;
+    height: 18px;
+}
+
+.material-diff {
+    font-size: 11px;
+    font-weight: 700;
+    margin-left: 4px;
+    color: var(--accent);
+}
+
+/* Pestañas y Contenido */
+.tab-header {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--bg-card);
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 10px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tab-btn.active {
+    color: var(--text-primary);
+    border-bottom: 2px solid var(--accent);
+    background-color: var(--bg-panel);
+}
+
+.tab-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    overflow-y: auto;
+    max-height: 340px;
+}
+
+/* Historial de Movimientos */
+.moves-list {
+    display: grid;
+    grid-template-columns: 36px 1fr 1fr;
+    font-size: 13px;
+    line-height: 24px;
+    gap: 2px;
+}
+
+.move-num {
+    color: var(--text-muted);
+    text-align: right;
+    padding-right: 8px;
+}
+
+.move-san {
+    padding: 2px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: monospace;
+    font-size: 13px;
+}
+
+.move-san:hover {
+    background-color: #3b4045;
+}
+
+.move-san.active {
+    background-color: #1e88e5;
+    color: white;
+}
+
+/* Opciones de Partida */
+.form-group {
+    margin-bottom: 14px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+select, input[type="range"] {
+    width: 100%;
+    padding: 8px 12px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 14px;
+    outline: none;
+}
+
+select:focus {
+    border-color: var(--accent);
+}
+
+.color-selector {
+    display: flex;
+    gap: 8px;
+}
+
+.color-btn {
+    flex: 1;
+    padding: 8px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.color-btn.active {
+    border-color: var(--accent);
+    background-color: rgba(76, 175, 80, 0.15);
+}
+
+/* Botones de Acción Rápida */
+.actions-container {
+    padding: 14px 16px;
+    border-top: 1px solid var(--border-color);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    background-color: var(--bg-card);
+}
+
+.btn {
+    padding: 10px 14px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+.btn-primary {
+    grid-column: span 2;
+    background-color: var(--accent);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-hover);
+}
+
+.btn-secondary {
+    background-color: #3b4045;
+    color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+    background-color: #4a5158;
+}
+
+.btn-hint {
+    background-color: #0288d1;
+    color: white;
+}
+
+.btn-hint:hover {
+    background-color: #039be5;
+}
+
+/* Modal de Promoción de Peón */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.65);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.modal-content {
+    background-color: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+    text-align: center;
+}
+
+.modal-content h3 {
+    font-size: 16px;
+    margin-bottom: 14px;
+}
+
+.promo-pieces {
+    display: flex;
+    gap: 12px;
+}
+
+.promo-piece-btn {
+    width: 64px;
+    height: 64px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.promo-piece-btn:hover {
+    background-color: #3b4045;
+    transform: scale(1.08);
+}
+
+/* Banner de Fin de Partida */
+.game-over-banner {
+    background: linear-gradient(135deg, #2e7d32, #1b5e20);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    display: none;
+}
+
+.game-over-banner.draw {
+    background: linear-gradient(135deg, #f57f17, #e65100);
+}
+
+.game-over-banner.defeat {
+    background: linear-gradient(135deg, #c62828, #b71c1c);
+}
+
+/* Responsividad */
+@media (max-width: 1024px) {
+    main {
+        flex-direction: column;
+        align-items: center;
+    }
+    .board-container {
+        width: 480px;
+        height: 480px;
+    }
+    .eval-bar-container {
+        height: 480px;
+    }
+    .sidebar {
+        width: 100%;
+        max-width: 530px;
+    }
+}

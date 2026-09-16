@@ -1,0 +1,46 @@
+# ==========================================
+# Stockfish Arena - .gitignore
+# ==========================================
+
+# Entornos virtuales Python
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+
+# Bytecode y cache de Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Artefactos de compilación C++ (si se compila Stockfish desde src/)
+src/*.o
+src/*.d
+src/*.gcda
+src/*.gcno
+src/stockfish
+src/stockfish.exe
+
+# Archivos de configuración de IDEs y editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Logs y volcados de depuración
+*.log
+
+# NOTA ARQUITECTÓNICA SOBRE EL BINARIO DE STOCKFISH (103 MB):
+# El ejecutable 'stockfish-windows-x86-64-universal.exe' pesa ~103.05 MB.
+# GitHub rechaza pushes con archivos directos > 100 MB.
+# Si se utiliza Git LFS (Large File Storage), este archivo se rastrea vía .gitattributes.
+# Si prefieres distribuirlo mediante GitHub Releases, descomenta la siguiente línea:
+# stockfish-windows-x86-64-universal.exe

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stockfish 19 - Chess Arena</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <div class="header-brand">
+            <span class="brand-icon">♟️</span>
+            <h1>Stockfish Arena</h1>
+            <span class="engine-badge">Stockfish 19 UCI</span>
+        </div>
+        <div class="header-status">
+            <div class="status-indicator">
+                <div id="statusDot" class="status-dot"></div>
+                <span id="statusText">Conectando...</span>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Área de Juego: Barra de Evaluación + Tablero -->
+        <div class="game-area">
+            <!-- Barra de Ventaja / Evaluación Dinámica -->
+            <div class="eval-bar-container" title="Barra de evaluación en tiempo real">
+                <div id="evalTextBlack" class="eval-text black-text"></div>
+                <div id="evalBarFill" class="eval-bar-fill"></div>
+                <div id="evalTextWhite" class="eval-text white-text">+0.0</div>
+            </div>
+
+            <!-- Tablero de Ajedrez -->
+            <div class="board-container">
+                <div id="chessboard" class="chessboard"></div>
+            </div>
+        </div>
+
+        <!-- Panel Lateral: Jugadores, Historial y Controles -->
+        <aside class="sidebar">
+            <!-- Tarjeta de Stockfish (Oponente) -->
+            <div class="player-info-card">
+                <div class="player-details">
+                    <div class="player-avatar">🤖</div>
+                    <div>
+                        <div class="player-name">Stockfish 19</div>
+                        <div id="engineEloLabel" class="player-elo">Elo ~1800 (Intermedio)</div>
+                    </div>
+                </div>
+                <div id="engineCaptured" class="captured-pieces"></div>
+            </div>
+
+            <!-- Pestañas de Navegación -->
+            <div class="tab-header">
+                <button id="tabMovesBtn" class="tab-btn active">Partida & Jugadas</button>
+                <button id="tabSettingsBtn" class="tab-btn">Dificultad & Opciones</button>
+            </div>
+
+            <!-- Contenido de Pestaña: Partida & Jugadas -->
+            <div id="tabMovesContent" class="tab-content">
+                <div id="gameOverBanner" class="game-over-banner"></div>
+                <div id="movesList" class="moves-list"></div>
+            </div>
+
+            <!-- Contenido de Pestaña: Dificultad & Opciones -->
+            <div id="tabSettingsContent" class="tab-content" style="display: none;">
+                <div class="form-group">
+                    <label for="difficultySelect">Nivel de Dificultad</label>
+                    <select id="difficultySelect">
+                        <option value="principiante">1. Principiante (Elo 1320 - Skill 1)</option>
+                        <option value="aficionado">2. Aficionado (Elo 1500 - Skill 5)</option>
+                        <option value="intermedio" selected>3. Intermedio (Elo 1800 - Skill 10)</option>
+                        <option value="avanzado">4. Avanzado (Elo 2100 - Skill 15)</option>
+                        <option value="maestro">5. Gran Maestro (Elo 2500 - Skill 20)</option>
+                        <option value="maximo">6. Máxima Potencia (+3500 Elo NNUE)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Jugar con</label>
+                    <div class="color-selector">
+                        <button id="btnColorWhite" class="color-btn active" data-color="white">⚪ Blancas</button>
+                        <button id="btnColorBlack" class="color-btn" data-color="black">⚫ Negras</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label id="eloSliderLabel">Ajuste Fino de Elo: 1800</label>
+                    <input type="range" id="eloSlider" min="1320" max="3190" step="10" value="1800">
+                </div>
+            </div>
+
+            <!-- Tarjeta de Orlando (Usuario) -->
+            <div class="player-info-card">
+                <div class="player-details">
+                    <div class="player-avatar">👤</div>
+                    <div>
+                        <div class="player-name">Orlando Dorival</div>
+                        <div class="player-elo">Jugador Humano</div>
+                    </div>
+                </div>
+                <div id="playerCaptured" class="captured-pieces"></div>
+            </div>
+
+            <!-- Acciones Rápidas -->
+            <div class="actions-container">
+                <button id="btnNewGame" class="btn btn-primary">🔄 Nueva Partida</button>
+                <button id="btnUndo" class="btn btn-secondary">↩️ Deshacer</button>
+                <button id="btnHint" class="btn btn-hint">💡 Pista</button>
+                <button id="btnFlip" class="btn btn-secondary">🔁 Voltear</button>
+                <button id="btnCopyPgn" class="btn btn-secondary">📋 Copiar PGN</button>
+                <button id="btnMute" class="btn btn-secondary">🔊 Sonido</button>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Modal de Promoción de Peón -->
+    <div id="promoModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Selecciona pieza de coronación</h3>
+            <div class="promo-pieces">
+                <button class="promo-piece-btn" data-promo="q" title="Dama"></button>
+                <button class="promo-piece-btn" data-promo="r" title="Torre"></button>
+                <button class="promo-piece-btn" data-promo="b" title="Alfil"></button>
+                <button class="promo-piece-btn" data-promo="n" title="Caballo"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts de la Aplicación -->
+    <script src="/static/pieces.js"></script>
+    <script src="/static/audio.js"></script>
+    <script src="/static/app.js"></script>
+</body>
+</html>
