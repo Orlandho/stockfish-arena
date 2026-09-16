@@ -1,0 +1,19 @@
+flowchart TD
+    Start(["Usuario ejecuta installer/install.bat"]) --> CheckPython{"¿Python >= 3.10 instalado?"}
+    
+    CheckPython -- No --> ShowError["Mostrar aviso guiado con enlace a Python.org"] --> EndFail(["Fin"])
+    
+    CheckPython -- Sí --> CheckVenv{"¿Existe .venv?"}
+    
+    CheckVenv -- No --> CreateVenv["Crear entorno virtual: python -m venv .venv"] --> InstallDeps
+    CheckVenv -- Sí --> InstallDeps["Instalar dependencias: pip install -r requirements.txt (FastAPI + pywebview)"]
+    
+    InstallDeps --> CheckIcons{"¿Existen iconos en assets/icon/?"}
+    CheckIcons -- No --> GenIcons["Generar app_icon.ico y app_icon.png"] --> CreateShortcut
+    CheckIcons -- Sí --> CreateShortcut["Crear 'Stockfish 19 Arena.lnk' en el Escritorio"]
+    
+    CreateShortcut --> AddStartMenu["Registrar en Menú Inicio de Windows"]
+    AddStartMenu --> PromptLaunch{"¿Iniciar Stockfish 19 Arena ahora?"}
+    
+    PromptLaunch -- Sí --> LaunchApp["Lanzar silenciosamente sin ventana CMD"] --> Success(["Instalación Exitosa"])
+    PromptLaunch -- No --> Success

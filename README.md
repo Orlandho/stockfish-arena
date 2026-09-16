@@ -131,7 +131,20 @@ stockfish-arena/
 - **Windows 10 / 11 (64-bit)**
 - **Python 3.10** o superior instalado y agregado al `PATH`.
 
-### Método 1: Arranque Rápido con un Clic (Recomendado)
+### Método 0: Instalador de Escritorio Nativo (Acceso Directo en Windows)
+Si prefieres instalar Stockfish Arena como un programa de escritorio tradicional con su propio icono en el Escritorio:
+1. Entra en la carpeta [`installer/`](installer/) y haz doble clic sobre:
+   ```cmd
+   installer\instalar.bat
+   ```
+2. El instalador configurará el entorno, instalará dependencias y creará automáticamente el acceso directo oficial:
+   - 📌 **En tu Escritorio:** `Stockfish 19 Arena.lnk`
+   - 📌 **En tu Menú Inicio:** `Stockfish 19 Arena.lnk`
+3. Al hacer doble clic sobre el acceso directo, la aplicación se abre en una **ventana nativa de Windows (sin barra de direcciones de navegador)** y sin ventanas de consola negras de fondo.
+
+---
+
+### Método 1: Arranque Rápido con un Clic (Navegador)
 Simplemente haz doble clic sobre el archivo:
 ```cmd
 jugar.bat

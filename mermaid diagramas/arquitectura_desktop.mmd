@@ -1,0 +1,35 @@
+flowchart TD
+    subgraph WindowsDesktop ["Entorno Windows (Escritorio / Menú Inicio)"]
+        Shortcut["Acceso Directo: 'Stockfish 19 Arena.lnk'<br/>(Icono: app_icon.ico)"]
+        Launcher["Lanzador Silencioso (launcher.vbs / pythonw.exe)"]
+    end
+
+    subgraph DesktopApp ["Stockfish 19 Arena - Proceso Nativo"]
+        AppPy["app_desktop.py (Orquestador Principal)"]
+        
+        subgraph FrontendLayer ["Capa de Presentación (UI/UX)"]
+            WebView["pywebview (Runtime Edge WebView2)<br/>- Ventana Nativa 1280x860<br/>- Sin barra de navegador ni pestañas<br/>- Icono nativo en Taskbar"]
+            HTMLGUI["GUI Web (HTML5 / CSS3 / ES6 / WebSockets)<br/>Tablero, Eval Bar, Move History"]
+        end
+
+        subgraph BackendLayer ["Capa de Servicio Local"]
+            UvicornSrv["Servidor ASGI (Uvicorn / FastAPI)<br/>http://127.0.0.1:8000 (Hilo Demonio)"]
+            EngineBridge["Bridge UCI (stockfish_engine.py)"]
+        end
+
+        subgraph EngineLayer ["Capa de Motor de Ajedrez"]
+            StockfishExe["stockfish-windows-x86-64-universal.exe<br/>(Motor de Cálculo Stockfish 19)"]
+        end
+    end
+
+    Shortcut --> Launcher
+    Launcher --> AppPy
+    AppPy -->|"1. Inicia Servidor Local"| UvicornSrv
+    AppPy -->|"2. Despliega Ventana Nativa"| WebView
+    WebView -->|"3. Carga Interfaz"| HTMLGUI
+    HTMLGUI <-->|"WebSockets / API REST"| UvicornSrv
+    UvicornSrv <-->|"Comandos UCI"| EngineBridge
+    EngineBridge <--> StockfishExe
+
+    WebView -.->|"Cierre de Ventana (Evento on_closed)"| AppPy
+    AppPy -.->|"Cierre Limpio de Procesos y Motor"| StockfishExe
